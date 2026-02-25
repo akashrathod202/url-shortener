@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>URL Shortener</title>
+
+  <style>
+    :root{
+      --bg:#0b1020;
+      --card: rgba(255,255,255,0.08);
+      --border: rgba(255,255,255,0.12);
+      --text:#eaf0ff;
+      --muted:#a9b7d6;
+      --btn:#4f7cff;
+      --btnHover:#3b67ff;
+      --shadow: 0 20px 60px rgba(0,0,0,0.45);
+      --radius: 18px;
+    }
+
+    *{ box-sizing:border-box; }
+    body{
+      margin:0;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial;
+      color: var(--text);
+      background:
+        radial-gradient(900px 500px at 20% 10%, rgba(79,124,255,0.25) 0%, transparent 60%),
+        radial-gradient(700px 420px at 80% 30%, rgba(0,255,180,0.12) 0%, transparent 60%),
+        var(--bg);
+      min-height:100vh;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding: 24px;
+    }
+
+    .wrap{
+      width: min(920px, 100%);
+      display:grid;
+      gap:16px;
+    }
+
+    .nav{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      padding: 14px 18px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      background: rgba(255,255,255,0.05);
+      backdrop-filter: blur(10px);
+    }
+    .brand{
+      font-weight: 800;
+      letter-spacing:0.2px;
+      display:flex;
+      gap:10px;
+      align-items:center;
+    }
+    .badge{
+      font-size:12px;
+      color: var(--muted);
+      border:1px solid var(--border);
+      padding: 6px 10px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.04);
+    }
+
+    .card{
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      background: var(--card);
+      box-shadow: var(--shadow);
+      padding: 22px;
+      backdrop-filter: blur(12px);
+    }
+    .short-link{
+  color:#b8c8ff;
+  font-weight:700;
+  text-decoration:none;
+  word-break:break-all;
+}
+.short-link:hover{
+  text-decoration:underline;
+}
+
+    h1{
+      margin:0;
+      font-size: clamp(24px, 3vw, 34px);
+      line-height:1.2;
+    }
+    p{
+      margin: 10px 0 0;
+      color: var(--muted);
+      line-height:1.6;
+    }
+
+    form{
+      margin-top: 18px;
+      display:grid;
+      gap: 10px;
+    }
+    label{
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .row{
+      display:flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    input{
+      flex:1;
+      min-width: 240px;
+      padding: 14px 14px;
+      border-radius: 14px;
+      border: 1px solid var(--border);
+      background: rgba(5,8,16,0.45);
+      color: var(--text);
+      outline:none;
+      font-size: 15px;
+    }
+    input:focus{
+      border-color: rgba(79,124,255,0.6);
+      box-shadow: 0 0 0 4px rgba(79,124,255,0.18);
+    }
+
+    button{
+      padding: 14px 16px;
+      border-radius: 14px;
+      border:none;
+      background: var(--btn);
+      color:white;
+      font-weight: 800;
+      cursor:pointer;
+      transition: 0.15s ease;
+      min-width: 140px;
+    }
+    button:hover{ background: var(--btnHover); transform: translateY(-1px); }
+    button:active{ transform: translateY(0px); }
+
+    .hint{
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    .mini{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-top: 14px;
+    }
+    .mini .box{
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 14px;
+      background: rgba(255,255,255,0.04);
+    }
+    .mini .t{
+      font-size: 13px;
+      color: var(--muted);
+      margin-bottom: 6px;
+    }
+    .mini .v{
+      font-weight: 700;
+    }
+
+    footer{
+      text-align:center;
+      color: var(--muted);
+      font-size: 13px;
+      padding: 6px 0 0;
+    }
+
+    @media (max-width: 700px){
+      .mini{ grid-template-columns: 1fr; }
+      button{ width: 100%; }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="wrap">
+    <div class="nav">
+      <div class="brand">🔗 URL Shortener <span class="badge">Server-Side Rendering</span></div>
+      <div class="badge">Node.js • Express • EJS</div>
+    </div>
+
+    <div class="card">
+      <h1>Shorten your long links instantly</h1>
+
+      <% if (locals.id) { %>
+        <p class="hint">
+          Your short URL:
+          <a href="/url/<%= id %>" target="_blank">
+            http://localhost:8000/url/<%= id %>
+          </a>
+        </p>
+      <% } %>
+      <p>Paste a long URL below. We’ll generate a short link you can share anywhere.</p>
+
+      <form method="post" action="/url">
+        <label for="url">Enter your original URL</label>
+
+        <div class="row">
+          <input
+            id="url"
+            type="url"
+            name="url"
+            required
+            placeholder="https://example.com/some/very/long/link"
+          />
+          <button type="submit">Generate</button>
+        </div>
+
+        <div class="hint">Tip: Always include <b>https://</b> in the URL.</div>
+      </form>
+
+      <div class="mini">
+        <div class="box">
+          <div class="t">What happens after you click Generate?</div>
+          <div class="v">POST /url → Save in MongoDB → Return Short ID</div>
+        </div>
+        <div class="box">
+          <div class="t">How redirect works?</div>
+          <div class="v">GET /:shortId → Find original → Redirect</div>
+        </div>
+      </div>
+    </div>
+
+    <footer>
+      Made for learning SSR 🚀
+    </footer>
+  </div>
+</body>
+</html>
